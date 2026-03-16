@@ -54,7 +54,11 @@ Opens at http://localhost:6006. Covers all UI components and feature components.
 
 ## Architecture
 
-The app proxies the Docker tax brackets API through a Next.js API route (`/api/tax-brackets/[year]`) with automatic retry on transient failures. Tax calculation runs client-side from the returned brackets.
+The Docker tax brackets API is proxied through a Next.js API route (`/api/tax-brackets/[year]`) rather than called directly from the browser. This avoids CORS issues, centralizes retry logic (exponential backoff, 3 attempts) for the API's intentional random errors, and keeps the client decoupled from the upstream URL. The proxy returns a consistent response shape regardless of what the upstream does.
+
+Tax calculation runs client-side from the returned brackets. It's pure math with no secrets, so there's no reason for a server round trip after the brackets are fetched.
+
+State is managed with a custom `useTaxCalculator` hook using a discriminated union (`idle | loading | success | error`) rather than separate boolean flags. This makes impossible states unrepresentable and keeps component rendering logic simple, each state maps to exactly one UI.
 
 ## Project Structure
 
