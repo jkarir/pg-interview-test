@@ -54,7 +54,7 @@ Opens at http://localhost:6006. Covers all UI components and feature components.
 
 ## Architecture
 
-The Docker tax brackets API is proxied through a Next.js API route (`/api/tax-brackets/[year]`) rather than called directly from the browser. This avoids CORS issues, centralizes retry logic (exponential backoff, 3 attempts) for the API's intentional random errors, and keeps the client decoupled from the upstream URL. The proxy returns a consistent response shape regardless of what the upstream does.
+The Docker tax brackets API is proxied through a Next.js API route (`/api/tax-brackets/[year]`) rather than called directly from the browser. This avoids CORS issues, centralizes retry logic (exponential backoff, 3 attempts) for transient upstream errors, and keeps the client decoupled from the upstream URL. The proxy returns a consistent response shape regardless of what the upstream does.
 
 Tax calculation runs client-side from the returned brackets. It's pure math with no secrets, so there's no reason for a server round trip after the brackets are fetched.
 
